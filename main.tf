@@ -1,7 +1,4 @@
 resource "aws_autoscaling_group" "hatest" {
-  #name                      = "${aws_launch_configuration.hatest.name}-asg"
-  #name                      = var.repave_strategy == "bluegreen" ? "${var.aws_launch_configuration_name}-asg" : "rolling-asg-${var.app_color}"
-  #name                      = "asg-${var.app_color}"
   name                      = var.repave_strategy == "bluegreen" ? "${var.aws_launch_configuration_name}-asg" : "rolling-asg"
   vpc_zone_identifier       = var.aws_subnet_ids
   launch_configuration      = var.aws_launch_configuration_name
@@ -30,12 +27,6 @@ resource "aws_autoscaling_group" "hatest" {
     value               = var.app_csi
     propagate_at_launch = true
   }
-
-  #tag {
-  #  key                 = "appcolor"
-  #  value               = var.app_color
-  #  propagate_at_launch = true
-  #}
 
 }
 
