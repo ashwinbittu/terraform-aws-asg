@@ -23,7 +23,7 @@ resource "aws_autoscaling_group" "hatest" {
   }
 
   tag {
-    key                 = "csiappid"
+    key                 = "app_id"
     value               = var.app_id
     propagate_at_launch = true
   }
