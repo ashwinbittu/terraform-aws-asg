@@ -2,8 +2,8 @@ resource "aws_autoscaling_group" "hatest" {
   name                      = var.repave_strategy == "bluegreen" ? "${var.aws_launch_configuration_name}-asg" : "rolling-asg"
   vpc_zone_identifier       = var.aws_subnet_ids
   launch_configuration      = var.aws_launch_configuration_name
-  desired_capacity          = 2
-  min_size                  = 2
+  desired_capacity          = 3
+  min_size                  = 3
   max_size                  = 5
   health_check_grace_period = 300
   health_check_type         = "ELB"
@@ -29,5 +29,3 @@ resource "aws_autoscaling_group" "hatest" {
   }
 
 }
-
-  
