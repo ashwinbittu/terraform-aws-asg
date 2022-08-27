@@ -34,7 +34,7 @@ resource "aws_autoscaling_group" "this" {
 
   availability_zones  = var.availability_zones
   vpc_zone_identifier = var.vpc_zone_identifier
-  launch_template_name = var.launch_template
+  launch_template_name = var.launch_template_name
 
   min_size                  = var.min_size
   max_size                  = var.max_size
