@@ -23,18 +23,12 @@ resource "aws_autoscaling_group" "this" {
   name        = var.use_name_prefix ? null : var.name
   name_prefix = var.use_name_prefix ? "${var.name}-" : null
 
-  dynamic "launch_template" {
-    for_each = var.use_mixed_instances_policy ? [] : [1]
-
-    content {
-      name    = local.launch_template
-      version = local.launch_template_version
-    }
-  }
-
   availability_zones  = var.availability_zones
   vpc_zone_identifier = var.vpc_zone_identifier
-  launch_template_name = var.launch_template_name
+  launch_template {
+      id = var.launch_template_id 
+      version = var.launch_template_version
+    }
 
   min_size                  = var.min_size
   max_size                  = var.max_size

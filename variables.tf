@@ -18,8 +18,8 @@ variable "snsemail" {
     default     = ""
 }
 
-variable "launch_template_name" {
-  description = "Name of launch template to be created"
+variable "launch_template_id" {
+  description = "ID of launch template to be created"
   type        = string
   default     = ""
 }
