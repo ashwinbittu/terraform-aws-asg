@@ -4,10 +4,6 @@ data "aws_default_tags" "current" {}
 locals {
   create = var.create 
 
-  launch_template_name    = coalesce(var.launch_template_name, var.name)
-  launch_template         = var.create_launch_template ? aws_launch_template.this[0].name : var.launch_template
-  launch_template_version = var.create_launch_template && var.launch_template_version == null ? aws_launch_template.this[0].latest_version : var.launch_template_version
-
   asg_tags = merge(
     data.aws_default_tags.current.tags,
     var.tags,
@@ -38,6 +34,7 @@ resource "aws_autoscaling_group" "this" {
 
   availability_zones  = var.availability_zones
   vpc_zone_identifier = var.vpc_zone_identifier
+  launch_template_name = var.launch_template
 
   min_size                  = var.min_size
   max_size                  = var.max_size
@@ -95,44 +92,6 @@ resource "aws_autoscaling_group" "this" {
     }
   }
 
-  dynamic "mixed_instances_policy" {
-    for_each = var.use_mixed_instances_policy ? [var.mixed_instances_policy] : []
-    content {
-      dynamic "instances_distribution" {
-        for_each = try([mixed_instances_policy.value.instances_distribution], [])
-        content {
-          on_demand_allocation_strategy            = try(instances_distribution.value.on_demand_allocation_strategy, null)
-          on_demand_base_capacity                  = try(instances_distribution.value.on_demand_base_capacity, null)
-          on_demand_percentage_above_base_capacity = try(instances_distribution.value.on_demand_percentage_above_base_capacity, null)
-          spot_allocation_strategy                 = try(instances_distribution.value.spot_allocation_strategy, null)
-          spot_instance_pools                      = try(instances_distribution.value.spot_instance_pools, null)
-          spot_max_price                           = try(instances_distribution.value.spot_max_price, null)
-        }
-      }
-
-      launch_template {
-        launch_template_specification {
-          launch_template_name = local.launch_template
-          version              = local.launch_template_version
-        }
-
-        dynamic "override" {
-          for_each = try(mixed_instances_policy.value.override, [])
-          content {
-            instance_type     = try(override.value.instance_type, null)
-            weighted_capacity = try(override.value.weighted_capacity, null)
-
-            dynamic "launch_template_specification" {
-              for_each = try([override.value.launch_template_specification], [])
-              content {
-                launch_template_id = try(launch_template_specification.value.launch_template_id, null)
-              }
-            }
-          }
-        }
-      }
-    }
-  }
 
   dynamic "warm_pool" {
     for_each = length(var.warm_pool) > 0 ? [var.warm_pool] : []
