@@ -110,5 +110,3 @@ output "iam_instance_profile_unique" {
   description = "Stable and unique string identifying the IAM instance profile"
   value       = try(aws_iam_instance_profile.this[0].unique_id, "")
 }
-Footer
-© 2022 GitHub, Inc.
