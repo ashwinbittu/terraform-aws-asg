@@ -125,7 +125,7 @@ resource "aws_autoscaling_policy" "this" {
   for_each = { for k, v in var.scaling_policies : k => v if local.create && var.create_scaling_policy }
 
   name                   = try(each.value.name, each.key)
-  autoscaling_group_name = var.ignore_desired_capacity_changes ? aws_autoscaling_group.idc[0].name : aws_autoscaling_group.this[0].name
+  autoscaling_group_name = aws_autoscaling_group.this[0].name
 
   adjustment_type           = try(each.value.adjustment_type, null)
   policy_type               = try(each.value.policy_type, null)
@@ -290,7 +290,7 @@ resource "aws_sns_topic_subscription" "sns_topic_subscription" {
 
 ## Create Autoscaling Notification Resource
 resource "aws_autoscaling_notification" "asg_notifications" {
-  group_names = [aws_autoscaling_group.this.id]
+  group_names = [aws_autoscaling_group.this[0].id]
   notifications = [
     "autoscaling:EC2_INSTANCE_LAUNCH",
     "autoscaling:EC2_INSTANCE_TERMINATE",
